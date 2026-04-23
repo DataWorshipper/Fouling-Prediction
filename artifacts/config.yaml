@@ -1,0 +1,87 @@
+paths:
+  raw_data: "data/shell_tube_fouling_final.csv"
+  processed_data: "data/processed.parquet"
+  model: "artifacts/xgboost_model.pkl"
+  scaler: "artifacts/scaler.pkl"
+
+data:
+  rename_map:
+    scenario_id: scenario
+    time_h: time_hours
+    degradation_source: fouling_type
+    T_in_C: T_in_design_C
+    T_in_K: T_in_design_K
+    m_dot_nominal_kg_s: flow_design
+    U_clean_W_m2K: U_design_clean
+    Q_clean_W: heat_duty_design_clean
+    T_in_measured_C: T_in_actual_C
+    m_dot_measured_kg_s: flow_actual
+    u_m_s: fluid_velocity
+    Re: reynolds_number
+    tau_w_Pa: shear_stress
+    dP_Pa: pressure_drop
+    U_overall_W_m2K: U_actual_measured
+    Q_W: heat_duty_actual
+    thermal_efficiency: efficiency_thermal
+    U_total_W_m2K: U_overall_total
+    Q_total_W: heat_duty_total
+    efficiency_total: efficiency_overall
+    Rf_m2K_W: target_Rf
+    fouling_factor_TEMA: tema_fouling_factor
+    R_wall_m2K_W: R_wall
+    cip_event: is_cleaning
+    cip_effectiveness: clean_efficiency
+
+  drop_after_rename:
+    - T_in_design_C
+    - T_in_design_K
+    - T_in_actual_C
+    - flow_design
+    - fouling_type
+    - tema_fouling_factor
+
+  drop_after_vif:
+    - reynolds_number
+    - fluid_velocity
+    - shear_stress
+    - pressure_drop
+    - U_design_clean
+    - heat_duty_design_clean
+    - U_actual_measured
+    - heat_duty_actual
+    - U_overall_total
+    - heat_duty_total
+    - efficiency_overall
+    - efficiency_thermal
+
+  untouchable_cols:
+    - scenario
+    - time_hours
+    - is_cleaning
+    - clean_efficiency
+    - target_Rf
+
+  target: target_Rf
+
+  features:
+    - flow_actual
+    - T_in_actual_K
+    - R_wall
+    - target_Rf_lag_1
+    - flow_lag_1
+    - target_Rf_rolling_12h
+    - hours_since_clean
+
+  train_scenarios: 64
+  test_scenarios: 16
+
+model:
+  optuna_trials: 20
+  xgboost:
+    tree_method: hist
+    random_state: 42
+    n_estimators: 500
+    max_depth: 6
+    learning_rate: 0.05
+    subsample: 0.8
+    colsample_bytree: 0.8
