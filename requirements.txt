@@ -9,3 +9,4 @@ pyyaml>=6.0
 streamlit>=1.32.0
 plotly>=5.18.0
 kagglehub>=0.2.0
+matplotlib
